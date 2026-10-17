@@ -1,0 +1,42 @@
+{
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": [
+    "tests"
+  ],
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.analysis.typeCheckingMode": "strict",
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.indexing": true,
+  "python.analysis.diagnosticMode": "openFilesOnly",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/../csorchestrator/src",
+    "${workspaceFolder}"
+  ],
+  "python.analysis.packageIndexDepths": [
+    {
+      "name": "csorchestrator",
+      "depth": 10
+    }
+  ],
+  "python.analysis.exclude": [
+    "./workspace",
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.*",
+    ".venv"
+  ],
+  "python.analysis.autoImportCompletions": true,
+  "editor.formatOnSave": true,
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "ruff.organizeImports": true,
+  "ruff.fixAll": true,
+  "mypy-type-checker.args": [
+    "--strict"
+  ]
+}

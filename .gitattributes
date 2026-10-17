@@ -1,0 +1,20 @@
+* text=auto
+
+# Python
+*.py diff=python
+*.pyi diff=python
+
+# Markdown
+*.md diff=markdown
+
+# Line endings
+*.sh text eol=lf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary safety
+*.png binary
+*.jpg binary
+*.zip binary
+*.exe binary
+*.pkl binary

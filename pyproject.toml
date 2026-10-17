@@ -1,0 +1,129 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "csopencvcuda"
+version = "5.0.0"
+description = "opencv with cuda support system for csorchestrator"
+authors = [
+  { name = "cscosine-dev", email = "cscosine@gmail.com" }
+]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+dependencies = [
+    # add csorchestrator when available on pip
+]
+
+[tool.setuptools.packages.find]
+where = ["./"]
+
+[project.optional-dependencies]
+# development tools (tests, linting, type checking)
+dev = [
+    "pytest>=9",
+    "pytest-cov>=7",
+    "mypy>=1.0",
+    "ruff>=0.4",
+    "pre-commit>=4",
+    "import-linter[ui]>=2.0",
+    "types-PyYAML",
+]
+
+# ===============================
+# Ruff - Linter + Formatter
+# ===============================
+[tool.ruff]
+
+# Maximum allowed line length for linting.
+line-length = 120
+
+# Target Python version for rule selection / parsing.
+target-version = "py311"
+
+[tool.ruff.lint]
+# Enabled rule groups:
+# E  -> Pycodestyle errors (style issues)
+# F  -> Pyflakes (logical errors / unused imports)
+# I  -> Import sorting
+# B  -> Bugbear (common bug patterns)
+# UP -> modern Python suggestions
+# SIM -> catches simplifications
+# N  -> PEP8 naming conventions
+# C4 -> flake8-comprehensions (more Pythonic comprehensions)
+# W  -> Pycodestyle warnings
+select = [
+    "E",
+    "F",
+    "I",
+    "B",
+    "UP",
+    "SIM",
+    "N",
+    "C4",
+    "W",
+]
+
+[tool.ruff.format]
+# Force double quotes in formatted code.
+# This keeps formatting consistent across the project.
+quote-style = "double"
+
+# ===============================
+# MyPy - Static Type Checker
+# ===============================
+[tool.mypy]
+mypy_path = "./"
+exclude = "^workspace/"
+
+# Python version used for type checking.
+python_version = "3.11"
+
+# Enables strict type checking mode.
+# This makes mypy behave like a production-grade type checker.
+# It enables:
+# - No implicit Any
+# - Strict optional checks
+# - Unused ignore detection
+strict = true
+
+# Ignore missing type hints in third-party libraries.
+# Many libraries don't ship with typing, so this avoids noise.
+ignore_missing_imports = true
+
+# Treat ./ as a real package root. Do not auto-guess.
+explicit_package_bases = true
+namespace_packages = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+check_untyped_defs = true
+disallow_untyped_decorators = false
+
+# ===============================
+# pytest - test execution
+# ===============================
+
+[tool.pytest.ini_options]
+
+testpaths = [
+    "tests"
+]
+
+norecursedirs = [
+    "workspace",
+    "*.egg-info",
+    ".git",
+    "__pycache__"
+]
+
+pythonpath = [
+    "./"
+]
+
+addopts = [
+    "-ra",
+    "--strict-markers"
+]

@@ -1,6 +1,9 @@
+fail_fast: false # using true is too annoying in development
+
 repos:
+  # run pre-commit autoupdate to update these versions
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files # prevents giant files from being committed.
       - id: check-case-conflict # checks for files that would conflict in case-insensitive filesystems.
@@ -21,15 +24,42 @@ repos:
       - id: forbid-submodules
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.9
+    rev: v0.15.12
     hooks:
       - id: ruff
         args: [--fix]
       - id: ruff-format
 
-  - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v20.1.4
+#  activate when csorchestrator is available as a package and can be added as additional-dependencies, for now, use as local command
+#  - repo: https://github.com/pre-commit/mirrors-mypy
+#    rev: v1.20.2
+#    hooks:
+#      - id: mypy
+#        args:
+#          [
+#            "--config-file=pyproject.toml",
+#          ]
+#        additional_dependencies:
+#          - types-PyYAML
+  - repo: local
     hooks:
-      - id: clang-format
-        exclude: '\.m$'
-        args: ["-style=LLVM"]
+      - id: mypy
+        name: mypy
+        entry: python -m mypy .
+        language: system
+        pass_filenames: false
+        args:
+          - --config-file=pyproject.toml
+
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.12
+    hooks:
+      - id: actionlint
+
+  - repo: local
+    hooks:
+      - id: no-unstaged-changes
+        name: Fail if unstaged changes exist
+        entry: git diff --quiet
+        language: system
+        pass_filenames: false

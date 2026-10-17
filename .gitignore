@@ -12,5 +12,5 @@ htmlcov/
 .coverage.*
 coverage*.xml
 
-# workspace for csOrchestrator
+# workspace for csorchestrator
 workspace/

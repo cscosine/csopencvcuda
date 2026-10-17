@@ -1,0 +1,663 @@
+name: csopencvcuda
+'on':
+  push:
+    branches:
+    - main
+    - dev
+    tags:
+    - v*.*.*
+  pull_request:
+    branches:
+    - main
+  workflow_dispatch: {}
+  schedule:
+  - cron: 0 3 * * 1
+jobs:
+  release-from-artifacts:
+    needs: orchestrator-matrix
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Repo Self Checkout
+      uses: actions/checkout@v6
+    - name: Clean Artifacts Folder
+      run: rm -rf artifacts
+    - name: Download all artifacts
+      uses: actions/download-artifact@v8
+      with:
+        path: artifacts
+    - name: Show downloaded files
+      run: find artifacts -type f
+    - name: Manifest creation
+      run: |-
+        import os  # noqa: F401 keep even if locally unused, necessary with variable subst
+        import sys
+        from pathlib import Path
+        from typing import cast
+
+        from csorchestratorsdk.portable.release_manifest import (
+            PublishPackageMode,  # noqa: F401 keep even if locally unused, necessary after variable subst
+            ReposPublishConfigDict,
+            collect_release_manifest_single_variant_and_prepare_manifest,
+        )
+
+        input_folder_base = Path('.')
+        input_manifest_path_variant = [(Path('csopencvcuda-5.0.0-csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja/csopencvcuda-5.0.0-csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja.csOrchestratorManifest'), 'csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja'), (Path('csopencvcuda-5.0.0-csv1-linux-ubuntu22.04-x64-generic-clang-default-ninja/csopencvcuda-5.0.0-csv1-linux-ubuntu22.04-x64-generic-clang-default-ninja.csOrchestratorManifest'), 'csv1-linux-ubuntu22.04-x64-generic-clang-default-ninja'), (Path('csopencvcuda-5.0.0-csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja/csopencvcuda-5.0.0-csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja.csOrchestratorManifest'), 'csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja'), (Path('csopencvcuda-5.0.0-csv1-linux-ubuntu24.04-x64-generic-clang-default-ninja/csopencvcuda-5.0.0-csv1-linux-ubuntu24.04-x64-generic-clang-default-ninja.csOrchestratorManifest'), 'csv1-linux-ubuntu24.04-x64-generic-clang-default-ninja'), (Path('csopencvcuda-5.0.0-csv1-windows-v10-x64-generic-msvc-default-msvc2022/csopencvcuda-5.0.0-csv1-windows-v10-x64-generic-msvc-default-msvc2022.csOrchestratorManifest'), 'csv1-windows-v10-x64-generic-msvc-default-msvc2022'), (Path('csopencvcuda-5.0.0-csv1-windows-v10-x64-generic-msvc-default-msvc2026/csopencvcuda-5.0.0-csv1-windows-v10-x64-generic-msvc-default-msvc2026.csOrchestratorManifest'), 'csv1-windows-v10-x64-generic-msvc-default-msvc2026')]
+        output_manifest_filename = Path('csopencvcuda-5.0.0.csOrchestratorManifest')
+        project_name = 'csopencvcuda'
+        project_version = '5.0.0'
+        base_path_additional_files = Path(os.environ["GITHUB_WORKSPACE"])
+        list_additional_files = [Path('csopencvcuda_config.py')]
+        output_folder_additional_files = Path('generated-for-release')
+        output_bundle_file_name = Path('csopencvcuda-5.0.0-bundle.tar.gz')
+        repo_publish_config_dict = {}
+        header_only_variants_sources = {'csv1-linux': 'csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja', 'csv1-windows': 'csv1-windows-v10-x64-generic-msvc-default-msvc2022'}
+        dependencies = {}
+        dependencies_dev = {}
+
+        errors_list = collect_release_manifest_single_variant_and_prepare_manifest(
+            input_folder_base=input_folder_base,
+            input_manifest_path_variant=input_manifest_path_variant,
+            output_manifest_filename=output_manifest_filename,
+            project_name=project_name,
+            project_version=project_version,
+            base_path_additional_files=base_path_additional_files,
+            list_additional_files=list_additional_files,
+            output_folder_additional_files=output_folder_additional_files,
+            output_bundle_file_name=output_bundle_file_name,
+            repo_publish_config_dict=repo_publish_config_dict,
+            header_only_variants_sources=header_only_variants_sources,
+            archive_files_are_in_context_based_folder=True,
+            dependencies=dependencies,
+            dependencies_dev=dependencies_dev,
+        )
+
+        if len(errors_list) > 0:
+            for e in errors_list:
+                print(e)
+            sys.exit("ERROR: getting package versions")
+      shell: python
+      env:
+        PYTHONPATH: ${{ github.workspace }}
+      working-directory: artifacts
+    - name: Upload manifest as artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        name: csopencvcuda-5.0.0.csOrchestratorManifest
+        path: |-
+          artifacts/generated-for-release/csopencvcuda-5.0.0.csOrchestratorManifest
+        overwrite: true
+    - name: Upload additional file csopencvcuda-5.0.0-bundle.tar.gz as artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: csopencvcuda-5.0.0-bundle.tar.gz
+        path: |-
+          artifacts/generated-for-release/csopencvcuda-5.0.0-bundle.tar.gz
+        overwrite: true
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v3
+      with:
+        files: |-
+          artifacts/**/*.tar.gz
+          artifacts/generated-for-release/csopencvcuda-5.0.0.csOrchestratorManifest
+          artifacts/generated-for-release/csopencvcuda-5.0.0-bundle.tar.gz
+      if: ${{ github.ref_type == 'tag' }}
+  orchestrator-matrix:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - execution_id: '0'
+          os: linux
+          os_version: ubuntu22.04
+          architecture: x64
+          architecture_variant: generic
+          compiler: gcc
+          compiler_version: default
+          generator: ninja
+          generator_type: singleconfig
+          generator_cmake: Ninja
+          runner: ubuntu-22.04
+          c_compiler: gcc
+          cpp_compiler: g++
+        - execution_id: '1'
+          os: linux
+          os_version: ubuntu22.04
+          architecture: x64
+          architecture_variant: generic
+          compiler: clang
+          compiler_version: default
+          generator: ninja
+          generator_type: singleconfig
+          generator_cmake: Ninja
+          runner: ubuntu-22.04
+          c_compiler: clang
+          cpp_compiler: clang++
+        - execution_id: '2'
+          os: linux
+          os_version: ubuntu24.04
+          architecture: x64
+          architecture_variant: generic
+          compiler: gcc
+          compiler_version: default
+          generator: ninja
+          generator_type: singleconfig
+          generator_cmake: Ninja
+          runner: ubuntu-24.04
+          c_compiler: gcc
+          cpp_compiler: g++
+        - execution_id: '3'
+          os: linux
+          os_version: ubuntu24.04
+          architecture: x64
+          architecture_variant: generic
+          compiler: clang
+          compiler_version: default
+          generator: ninja
+          generator_type: singleconfig
+          generator_cmake: Ninja
+          runner: ubuntu-24.04
+          c_compiler: clang
+          cpp_compiler: clang++
+        - execution_id: '4'
+          os: windows
+          os_version: v10
+          architecture: x64
+          architecture_variant: generic
+          compiler: msvc
+          compiler_version: default
+          generator: msvc2022
+          generator_type: multiconfig
+          generator_cmake: Visual Studio 17 2022
+          runner: windows-2022
+        - execution_id: '5'
+          os: windows
+          os_version: v10
+          architecture: x64
+          architecture_variant: generic
+          compiler: msvc
+          compiler_version: default
+          generator: msvc2026
+          generator_type: multiconfig
+          generator_cmake: Visual Studio 18 2026
+          runner: windows-2025-vs2026
+    steps:
+    - name: Repo git self-checkout
+      uses: actions/checkout@v6
+    - name: csCMake Git clone/pull-ff
+      uses: actions/checkout@v6
+      with:
+        repository: cscosine/csCMake.git
+        path: workspace/csCMake
+        ref: main
+        fetch-depth: '1'
+        token: ${{ secrets.ACTIONS_ORG_ACCESS }}
+    - name: opencv Git clone/pull-ff
+      uses: actions/checkout@v6
+      with:
+        repository: cscosine/opencv.git
+        path: workspace/opencv
+        ref: cs-main
+        fetch-depth: '1'
+        token: ${{ secrets.ACTIONS_ORG_ACCESS }}
+    - name: opencv_contrib Git clone/pull-ff
+      uses: actions/checkout@v6
+      with:
+        repository: cscosine/opencv_contrib.git
+        path: workspace/opencv_contrib
+        ref: cs-main
+        fetch-depth: '1'
+        token: ${{ secrets.ACTIONS_ORG_ACCESS }}
+    - name: Run command Pre-accept MS fonts EULA (Linux)
+      run: |-
+        set -euo pipefail
+
+        # Pre-accept the Microsoft Core Fonts EULA so installation can run
+        # non-interactively. No-op when the package is already installed.
+        if dpkg -s ttf-mscorefonts-installer >/dev/null 2>&1; then
+          echo "ttf-mscorefonts-installer already installed, skipping."
+          exit 0
+        fi
+
+        sudo apt-get update
+        echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | sudo debconf-set-selections
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ttf-mscorefonts-installer
+      if: ${{ matrix.os == 'linux' && startsWith(matrix.os_version, 'ubuntu') }}
+      shell: bash
+    - name: Run command Remove libunwind (Ubuntu 22.04)
+      run: |-
+        set -euo pipefail
+
+        # Remove libunwind causing errors on ubuntu 22.04. No-op when not installed.
+        packages=$(dpkg -l 'libunwind*' 2>/dev/null | awk '$1 == "ii" {print $2}' || true)
+        if [ -z "${packages}" ]; then
+          echo "libunwind not installed, nothing to remove."
+          exit 0
+        fi
+
+        echo "Removing: ${packages}"
+        # shellcheck disable=SC2086
+        sudo apt-get remove -y ${packages}
+      if: ${{ matrix.os == 'linux' && startsWith(matrix.os_version, 'ubuntu22.04') }}
+      shell: bash
+    - name: Run command Install apt packages (Linux)
+      run: |-
+        set -euo pipefail # enable strict mode
+
+
+        packages=(
+          libavcodec-dev
+          libavformat-dev
+          libdc1394-dev
+          libgstreamer-plugins-base1.0-dev
+          libgstreamer1.0-dev
+          libgtk-3-dev
+          libjpeg-dev
+          libopenexr-dev
+          libpng-dev
+          libswscale-dev
+          libtbb-dev
+          libtbb12
+          libtiff-dev
+          libwebp-dev
+          pkg-config
+          python3-dev
+          python3-numpy
+          python3-pip
+        )
+
+        missing=()
+
+        for pkg in "${packages[@]}"; do
+          dpkg -s "$pkg" &>/dev/null || missing+=("$pkg")
+        done
+
+        if [ ${#missing[@]} -ne 0 ]; then
+
+          sudo apt update
+
+          echo "Need to install missing packages: ${missing[*]}"
+          sudo apt install -y "${missing[@]}"
+        else
+          echo "All packages already installed."
+        fi
+      if: ${{ matrix.os == 'linux' && startsWith(matrix.os_version, 'ubuntu') }}
+      shell: bash
+    - name: Run command Install CUDA (Linux ubuntu22.04)
+      run: |-
+        set -euo pipefail
+
+        # Idempotent CUDA toolkit install: skip everything when nvcc is already present.
+        if [ -x /usr/local/cuda-13.3/bin/nvcc ]; then
+          echo "CUDA 13.3.1 already installed (/usr/local/cuda-13.3/bin/nvcc present), skipping."
+          exit 0
+        fi
+
+        # apt pin, install only when not already configured
+        if [ ! -f /etc/apt/preferences.d/cuda-repository-pin-600 ]; then
+          wget -q https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
+          sudo mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600
+        fi
+
+        # local repository package (contains the multi-GB payload): install only when missing
+        if ! dpkg -s cuda-repo-ubuntu2204-13-3-local >/dev/null 2>&1; then
+          wget -q https://developer.download.nvidia.com/compute/cuda/13.3.1/local_installers/cuda-repo-ubuntu2204-13-3-local_13.3.1-610.43.02-1_amd64.deb
+          sudo dpkg -i cuda-repo-ubuntu2204-13-3-local_13.3.1-610.43.02-1_amd64.deb
+          sudo cp /var/cuda-repo-ubuntu2204-13-3-local/cuda-*-keyring.gpg /usr/share/keyrings/
+          rm -f cuda-repo-ubuntu2204-13-3-local_13.3.1-610.43.02-1_amd64.deb
+        fi
+
+        sudo apt-get update
+        sudo apt-get -y install cuda-toolkit-13-3
+      if: ${{ matrix.os == 'linux' && startsWith(matrix.os_version, 'ubuntu22.04') && matrix.architecture == 'x64' }}
+      shell: bash
+    - name: Run command Install cuDNN (Linux ubuntu22.04)
+      run: |-
+        set -euo pipefail
+
+        # Idempotent cuDNN install: skip everything when the dev package is present.
+        if dpkg -s libcudnn9-dev-cuda-13 >/dev/null 2>&1; then
+          echo "cuDNN for CUDA 13 already installed, skipping."
+          exit 0
+        fi
+
+        # local repository package: install only when missing
+        if ! dpkg -s cudnn-local-repo-ubuntu2204-9.24.0 >/dev/null 2>&1; then
+          wget -q https://developer.download.nvidia.com/compute/cudnn/9.24.0/local_installers/cudnn-local-repo-ubuntu2204-9.24.0_1.0-1_amd64.deb
+          sudo dpkg -i cudnn-local-repo-ubuntu2204-9.24.0_1.0-1_amd64.deb
+          sudo cp /var/cudnn-local-repo-ubuntu2204-9.24.0/cudnn-*-keyring.gpg /usr/share/keyrings/
+          rm -f cudnn-local-repo-ubuntu2204-9.24.0_1.0-1_amd64.deb
+        fi
+
+        sudo apt-get update
+        sudo apt-get -y install libcudnn9-cuda-13 libcudnn9-dev-cuda-13
+      if: ${{ matrix.os == 'linux' && startsWith(matrix.os_version, 'ubuntu22.04') && matrix.architecture == 'x64' }}
+      shell: bash
+    - name: Run command Install CUDA (Linux ubuntu24.04)
+      run: |-
+        set -euo pipefail
+
+        # Idempotent CUDA toolkit install: skip everything when nvcc is already present.
+        if [ -x /usr/local/cuda-13.3/bin/nvcc ]; then
+          echo "CUDA 13.3.1 already installed (/usr/local/cuda-13.3/bin/nvcc present), skipping."
+          exit 0
+        fi
+
+        # apt pin, install only when not already configured
+        if [ ! -f /etc/apt/preferences.d/cuda-repository-pin-600 ]; then
+          wget -q https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-ubuntu2404.pin
+          sudo mv cuda-ubuntu2404.pin /etc/apt/preferences.d/cuda-repository-pin-600
+        fi
+
+        # local repository package (contains the multi-GB payload): install only when missing
+        if ! dpkg -s cuda-repo-ubuntu2404-13-3-local >/dev/null 2>&1; then
+          wget -q https://developer.download.nvidia.com/compute/cuda/13.3.1/local_installers/cuda-repo-ubuntu2404-13-3-local_13.3.1-610.43.02-1_amd64.deb
+          sudo dpkg -i cuda-repo-ubuntu2404-13-3-local_13.3.1-610.43.02-1_amd64.deb
+          sudo cp /var/cuda-repo-ubuntu2404-13-3-local/cuda-*-keyring.gpg /usr/share/keyrings/
+          rm -f cuda-repo-ubuntu2404-13-3-local_13.3.1-610.43.02-1_amd64.deb
+        fi
+
+        sudo apt-get update
+        sudo apt-get -y install cuda-toolkit-13-3
+      if: ${{ matrix.os == 'linux' && startsWith(matrix.os_version, 'ubuntu24.04') && matrix.architecture == 'x64' }}
+      shell: bash
+    - name: Run command Install cuDNN (Linux ubuntu24.04)
+      run: |-
+        set -euo pipefail
+
+        # Idempotent cuDNN install: skip everything when the dev package is present.
+        if dpkg -s libcudnn9-dev-cuda-13 >/dev/null 2>&1; then
+          echo "cuDNN for CUDA 13 already installed, skipping."
+          exit 0
+        fi
+
+        # local repository package: install only when missing
+        if ! dpkg -s cudnn-local-repo-ubuntu2404-9.24.0 >/dev/null 2>&1; then
+          wget -q https://developer.download.nvidia.com/compute/cudnn/9.24.0/local_installers/cudnn-local-repo-ubuntu2404-9.24.0_1.0-1_amd64.deb
+          sudo dpkg -i cudnn-local-repo-ubuntu2404-9.24.0_1.0-1_amd64.deb
+          sudo cp /var/cudnn-local-repo-ubuntu2404-9.24.0/cudnn-*-keyring.gpg /usr/share/keyrings/
+          rm -f cudnn-local-repo-ubuntu2404-9.24.0_1.0-1_amd64.deb
+        fi
+
+        sudo apt-get update
+        sudo apt-get -y install libcudnn9-cuda-13 libcudnn9-dev-cuda-13
+      if: ${{ matrix.os == 'linux' && startsWith(matrix.os_version, 'ubuntu24.04') && matrix.architecture == 'x64' }}
+      shell: bash
+    - name: Run command Verify CUDA (Linux)
+      run: |-
+        set -euo pipefail
+
+        # Cheap post-conditions of the CUDA install steps.
+        ls /usr/local/cuda/lib64/stubs/libcuda.so
+        /usr/local/cuda/bin/nvcc --version
+      if: ${{ matrix.os == 'linux' && startsWith(matrix.os_version, 'ubuntu') }}
+      shell: bash
+    - name: Run command Install numpy (Windows)
+      run: |-
+        $ErrorActionPreference = "Stop"
+
+        # Idempotent numpy install: skip when numpy is importable.
+        python -c "import numpy" 2>$null
+        if ($LASTEXITCODE -eq 0) {
+          Write-Host "numpy already installed, skipping."
+          exit 0
+        }
+
+        python -m pip install --upgrade pip
+        python -m pip install numpy
+      if: ${{ matrix.os == 'windows' }}
+      shell: powershell
+    - name: Run command Install CUDA (Windows)
+      run: |-
+        $ErrorActionPreference = "Stop"
+
+        # Idempotent CUDA toolkit install: skip everything when nvcc is already present.
+        $nvcc = "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/13.3/bin/nvcc.exe"
+        if (Test-Path $nvcc) {
+          Write-Host "CUDA 13.3.1 already installed ($nvcc present), skipping."
+          exit 0
+        }
+
+        $installer = "$env:TEMP/cuda_13.3.1_windows.exe"
+
+        Write-Host "Download CUDA installer..."
+        $download = [System.Diagnostics.Stopwatch]::StartNew()
+        curl.exe -L --fail --progress-bar -o $installer "https://developer.download.nvidia.com/compute/cuda/13.3.1/local_installers/cuda_13.3.1_windows.exe"
+        if ($LASTEXITCODE -ne 0) {
+          throw "CUDA download failed with exit code $LASTEXITCODE"
+        }
+        $download.Stop()
+        Write-Host ("Download took {0:mm\:ss}" -f $download.Elapsed)
+
+        $install = [System.Diagnostics.Stopwatch]::StartNew()
+        $p = Start-Process -FilePath $installer -ArgumentList "-s" -Wait -PassThru
+        $install.Stop()
+        Write-Host ("Installation took {0:mm\:ss}" -f $install.Elapsed)
+
+        if ($p.ExitCode -ne 0) {
+          throw "Installer failed with exit code $($p.ExitCode)"
+        }
+
+        Remove-Item -Path $installer -ErrorAction SilentlyContinue
+      if: ${{ matrix.os == 'windows' }}
+      shell: powershell
+    - name: Run command Verify CUDA (Windows)
+      run: |-
+        $nvcc = "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/13.3/bin/nvcc.exe"
+
+        if (!(Test-Path $nvcc)) {
+          throw "nvcc not found: $nvcc"
+        }
+
+        & $nvcc --version
+      if: ${{ matrix.os == 'windows' }}
+      shell: powershell
+    - name: Run command Install cuDNN (Windows)
+      run: |-
+        $ErrorActionPreference = "Stop"
+
+        # Idempotent cuDNN install: skip everything when the install root is present.
+        $root = "C:/Program Files/NVIDIA/CUDNN/v9.23"
+        if (Test-Path $root) {
+          Write-Host "cuDNN already installed ($root present), skipping."
+          exit 0
+        }
+
+        $installer = "$env:TEMP/cudnn_9.23.2_windows_x86_64.exe"
+
+        Write-Host "Downloading cuDNN installer..."
+        $download = [System.Diagnostics.Stopwatch]::StartNew()
+        curl.exe -L --fail --progress-bar -o $installer "https://developer.download.nvidia.com/compute/cudnn/9.23.2/local_installers/cudnn_9.23.2_windows_x86_64.exe"
+        if ($LASTEXITCODE -ne 0) {
+          throw "cuDNN download failed with exit code $LASTEXITCODE"
+        }
+        $download.Stop()
+        Write-Host ("Download took {0:mm\:ss}" -f $download.Elapsed)
+
+        $install = [System.Diagnostics.Stopwatch]::StartNew()
+        $p = Start-Process -FilePath $installer -ArgumentList "-s" -Wait -PassThru
+        $install.Stop()
+        Write-Host ("Installation took {0:mm\:ss}" -f $install.Elapsed)
+
+        if ($p.ExitCode -ne 0) {
+          throw "Installer failed with exit code $($p.ExitCode)"
+        }
+
+        Remove-Item -Path $installer -ErrorAction SilentlyContinue
+      if: ${{ matrix.os == 'windows' }}
+      shell: powershell
+    - name: Run command Verify cuDNN (Windows)
+      run: |-
+        $root = "C:/Program Files/NVIDIA/CUDNN/v9.23"
+
+        # Print directory tree first (directories only view via tree)
+        Write-Host "cuDNN directory tree ($root):"
+        cmd /c "tree `"$root`" /a"
+        Write-Host ""
+
+        $dllPath = Join-Path $root "bin/12.9/x64"
+        $includePath = Join-Path $root "include/12.9"
+        $libFile = Join-Path $root "lib/12.9/x64/cudnn.lib"
+
+        # Strict existence checks
+        if (-not (Test-Path $dllPath)) {
+          throw "cuDNN DLL directory not found: $dllPath"
+        }
+
+        if (-not (Test-Path $includePath)) {
+          throw "cuDNN include directory not found: $includePath"
+        }
+
+        if (-not (Test-Path $libFile)) {
+          throw "cuDNN library file not found: $libFile"
+        }
+
+        # List DLLs strictly from target folder
+        $dlls = Get-ChildItem -Path $dllPath -Filter "cudnn*.dll" -ErrorAction Stop
+
+        if (-not $dlls) {
+          throw "No cuDNN DLLs found in $dllPath"
+        }
+
+        Write-Host ""
+        Write-Host "Found cuDNN DLLs in ${dllPath}:"
+        $dlls | Select-Object -ExpandProperty FullName
+
+        Write-Host ""
+        Write-Host "Include path verified: ${includePath}"
+        Write-Host "Library verified: ${libFile}"
+      if: ${{ matrix.os == 'windows' }}
+      shell: powershell
+    - name: Get Precompiled Lib eigen3 download tar.gz
+      uses: robinraju/release-downloader@v1.13
+      with:
+        repository: cscosine/third_party_base_libs
+        tag: v0.1.0-rc3
+        fileName: third_party_base_libs-0.1.0-eigen3-3.4.0-csv1-${{ matrix.os }}.tar.gz
+        out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
+    - name: Get Precompiled Lib eigen3 extract tar.gz
+      run: |-
+        tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/third_party_base_libs-0.1.0-eigen3-3.4.0-csv1-${{ matrix.os }}.tar.gz -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
+        rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/third_party_base_libs-0.1.0-eigen3-3.4.0-csv1-${{ matrix.os }}.tar.gz
+      shell: bash
+    - name: cmake workflow on opencv CMake Workflow (Linux) for config(s) debug-release
+      run: |-
+        set -e
+        if [[ "${{ matrix.generator_type }}" == "singleconfig" ]]; then
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-release
+        elif [[ "${{ matrix.generator_type }}" == "multiconfig" ]]; then
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug-release
+        else
+          echo "Unknown generator_type: ${{ matrix.generator_type }}"
+          exit 1
+        fi
+      if: ${{ matrix.os == 'linux' && startsWith(matrix.os_version, 'ubuntu') }}
+      shell: bash
+      working-directory: workspace/opencv
+    - name: cmake workflow on opencv CMake Workflow (Windows on powershell) for config(s) debug-release
+      run: |-
+        # Remove MinGW and Strawberry from path to avoid conflicts with MSVC
+        $env:PATH = ($env:PATH -split ';' |
+          Where-Object {
+            $p = $_.TrimEnd('\').ToLower()
+            $p -notmatch 'mingw|msys|strawberry'
+          }) -join ';'
+
+        "PATH=$env:PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        Write-Host ""
+        Write-Host "PATH:"
+        $env:PATH -split ';'
+
+        $gen = "${{ matrix.generator_type }}"
+        if ($gen -eq "singleconfig") {
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-release
+        }
+        elseif ($gen -eq "multiconfig") {
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug-release
+        }
+        else {
+           Write-Host "Unknown generator_type: $gen"
+          exit 1
+        }
+      if: ${{ matrix.os == 'windows' }}
+      shell: powershell
+      working-directory: workspace/opencv
+    - name: Get Versions
+      run: |-
+        import sys
+        from pathlib import Path
+        from typing import cast
+
+        from csorchestratorsdk.portable.package_version import CMakeConfigPackageVersionGrep, PackageVersion
+        from csorchestratorsdk.portable.release_manifest import get_package_versions_and_write_single_variant_manifest
+
+        repos_config_file_list = []
+        repos_auto_search_list = []
+        repos_version = [PackageVersion(name='opencv', version='5.0.0')]
+        base_install_dir = Path('workspace/install')
+        install_subdir = Path('csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}')
+        variant_string = 'csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}'
+        project_name = 'csopencvcuda'
+        project_version = '5.0.0'
+        output_file = Path('workspace/install/csopencvcuda-5.0.0-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}.csOrchestratorManifest')
+
+        errors_list = get_package_versions_and_write_single_variant_manifest(
+            repos_config_file_list=repos_config_file_list,
+            repos_auto_search_list=repos_auto_search_list,
+            repos_version=repos_version,
+            base_install_dir=base_install_dir,
+            install_subdir=install_subdir,
+            variant_string=variant_string,
+            project_name=project_name,
+            project_version=project_version,
+            output_file=output_file,
+        )
+
+        if len(errors_list) > 0:
+            for e in errors_list:
+                print(e)
+            sys.exit("ERROR: getting package versions")
+      shell: python
+      env:
+        PYTHONPATH: ${{ github.workspace }}
+    - name: Create Archives
+      run: |-
+        import sys
+        from pathlib import Path
+        from typing import cast
+
+        from csorchestratorsdk.portable.release_manifest import (
+            load_release_manifest_single_variant_and_prepare_archive,
+        )
+
+        input_full_path = Path('workspace/install/csopencvcuda-5.0.0-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}.csOrchestratorManifest')
+        project_name_and_version = 'csopencvcuda-5.0.0'
+        context_os_architecture_compiler_generator_string = 'csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}'
+        input_base_dir = Path('workspace/install')
+
+        errors_list = load_release_manifest_single_variant_and_prepare_archive(
+            input_full_path=input_full_path,
+            project_name_and_version=project_name_and_version,
+            context_os_architecture_compiler_generator_string=context_os_architecture_compiler_generator_string,
+            input_base_dir=input_base_dir.resolve(),
+        )
+
+        if len(errors_list) > 0:
+            for e in errors_list:
+                print(e)
+            sys.exit("ERROR: getting package versions")
+      shell: python
+      env:
+        PYTHONPATH: ${{ github.workspace }}
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        name: csopencvcuda-5.0.0-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
+        path: |-
+          workspace/install/*.tar.gz
+          workspace/install/*.csOrchestratorManifest
+        overwrite: true
