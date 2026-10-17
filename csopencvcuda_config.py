@@ -50,6 +50,7 @@ from csorchestrator.foundation.core.report import Report
 from csorchestrator.frontend.local_execution.step_utils import (
     StepExecuteOnlyOn,
     StepExecuteOnlyOncePerMatrix,
+    StepSkipExecutionOnLocal,
 )
 from csorchestrator.frontend.step.step_custom_command import (
     StepBashScriptCommand,
@@ -361,22 +362,33 @@ def install_cudnn_script_linux(ubuntu_number: str) -> str:
 _INSTALL_NUMPY_SCRIPT_WINDOWS = r"""
 $ErrorActionPreference = "Stop"
 
-# Idempotent numpy install: skip when numpy is importable.
+# Check whether numpy is importable.
+$oldErrorActionPreference = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
 python -c "import numpy" 2>$null
-if ($LASTEXITCODE -eq 0) {
-  Write-Host "numpy already installed, skipping."
-  exit 0
-}
+$numpyExitCode = $LASTEXITCODE
+$ErrorActionPreference = $oldErrorActionPreference
 
-python -m pip install --upgrade pip
-python -m pip install numpy
+if ($numpyExitCode -eq 0) {
+    Write-Host "numpy already installed, skipping."
+} else {
+    python -m pip install --upgrade pip
+    if ($LASTEXITCODE -ne 0) {
+    throw "Failed to upgrade pip"
+    }
+
+    python -m pip install numpy
+    if ($LASTEXITCODE -ne 0) {
+    throw "Failed to install numpy"
+    }
+}
 """
 
 _INSTALL_CUDA_SCRIPT_WINDOWS = r"""
 $ErrorActionPreference = "Stop"
 
 # Idempotent CUDA toolkit install: skip everything when nvcc is already present.
-$nvcc = "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/__CUDA_VERSION_DIR__/bin/nvcc.exe"
+$nvcc = "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v__CUDA_VERSION_DIR__/bin/nvcc.exe"
 if (Test-Path $nvcc) {
   Write-Host "CUDA __CUDA_VERSION__ already installed ($nvcc present), skipping."
   exit 0
@@ -406,7 +418,7 @@ Remove-Item -Path $installer -ErrorAction SilentlyContinue
 """
 
 _VERIFY_CUDA_SCRIPT_WINDOWS = r"""
-$nvcc = "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/__CUDA_VERSION_DIR__/bin/nvcc.exe"
+$nvcc = "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v__CUDA_VERSION_DIR__/bin/nvcc.exe"
 
 if (!(Test-Path $nvcc)) {
   throw "nvcc not found: $nvcc"
@@ -587,7 +599,7 @@ def install_csopencvcuda_build_dependencies(
     p.add_step(
         StepBashScriptCommand(
             name="Remove libunwind (Ubuntu 22.04)",
-            description="remove libunwind causing errors on ubuntu 22.04",
+            description="remove libunwind -dev packages causing errors on ubuntu 22.04 GitHub runners",
             cmd=_REMOVE_LIBUNWIND_SCRIPT_LINUX.strip().splitlines(),
         )
         .add_extra(StepExecuteOnlyOncePerMatrix())
@@ -597,6 +609,10 @@ def install_csopencvcuda_build_dependencies(
                 version_starts_with=UbuntuVersions.UBUNTU_22_04.value,
             )
         )
+        # GitHub-runners-only: NEVER run on a dev machine. Removing
+        # packages with apt on a persistent host can cascade into removing
+        # ubuntu-desktop/xserver/NVIDIA drivers.
+        .add_extra(StepSkipExecutionOnLocal())
     )
 
     p.add_step(

@@ -398,15 +398,26 @@ jobs:
       run: |-
         $ErrorActionPreference = "Stop"
 
-        # Idempotent numpy install: skip when numpy is importable.
+        # Check whether numpy is importable.
+        $oldErrorActionPreference = $ErrorActionPreference
+        $ErrorActionPreference = "Continue"
         python -c "import numpy" 2>$null
-        if ($LASTEXITCODE -eq 0) {
-          Write-Host "numpy already installed, skipping."
-          exit 0
-        }
+        $numpyExitCode = $LASTEXITCODE
+        $ErrorActionPreference = $oldErrorActionPreference
 
-        python -m pip install --upgrade pip
-        python -m pip install numpy
+        if ($numpyExitCode -eq 0) {
+            Write-Host "numpy already installed, skipping."
+        } else {
+            python -m pip install --upgrade pip
+            if ($LASTEXITCODE -ne 0) {
+            throw "Failed to upgrade pip"
+            }
+
+            python -m pip install numpy
+            if ($LASTEXITCODE -ne 0) {
+            throw "Failed to install numpy"
+            }
+        }
       if: ${{ matrix.os == 'windows' }}
       shell: powershell
     - name: Run command Install CUDA (Windows)
@@ -414,7 +425,7 @@ jobs:
         $ErrorActionPreference = "Stop"
 
         # Idempotent CUDA toolkit install: skip everything when nvcc is already present.
-        $nvcc = "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/13.3/bin/nvcc.exe"
+        $nvcc = "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v13.3/bin/nvcc.exe"
         if (Test-Path $nvcc) {
           Write-Host "CUDA 13.3.1 already installed ($nvcc present), skipping."
           exit 0
@@ -445,7 +456,7 @@ jobs:
       shell: powershell
     - name: Run command Verify CUDA (Windows)
       run: |-
-        $nvcc = "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/13.3/bin/nvcc.exe"
+        $nvcc = "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v13.3/bin/nvcc.exe"
 
         if (!(Test-Path $nvcc)) {
           throw "nvcc not found: $nvcc"
