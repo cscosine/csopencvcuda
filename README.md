@@ -2,6 +2,35 @@
 
 Automated cross-platform build system and CI pipeline recipe for **OpenCV with CUDA support** (targeting **v5.0.0**), powered by [**csorchestrator**](https://github.com/cscosine/csorchestrator).
 
+> [!CAUTION]
+> ## ⚠️ Known Build Limitations — Read Before Building
+>
+> ### 1. Visual Studio 2026 (VS 2026) is NOT built — VS 2022 only
+> VS 2026 (`Visual Studio 18 2026`, runner `windows-2025-vs2026`) was removed
+> from the build matrix in [`utils/build_matrix.py`](utils/build_matrix.py):
+> the remote (GitHub Actions) build **fails downloading cuDNN** on that runner.
+> Only `Visual Studio 17 2022` on `windows-2022` is built, and `opencv_mapping()`
+> in [`csopencvcuda_config.py`](csopencvcuda_config.py) resolves Windows consumers
+> to `MSVC_17_2022`.
+>
+> ### 2. Local Ubuntu 22.04 build needs an explicit CUDA path, CI does not
+> The OpenCV CMake preset (csCMake) as committed works on GitHub CI but
+> **does NOT configure locally on Ubuntu 22.04** (CUDA not found). Setting
+> explicitly:
+> ```cmake
+> CMAKE_CUDA_COMPILER="/usr/local/cuda-13.3/bin/nvcc"
+> CUDA_TOOLKIT_ROOT_DIR="/usr/local/cuda-13.3"
+> ```
+> fixes the local configure but **breaks the remote (CI) build**, so it is
+> intentionally NOT committed. Local root cause (observed): `/usr/bin/nvcc`
+> is a stale CUDA 11.5 while the real CUDA 13.3 toolkit installed by the recipe
+> lives in `/usr/local/cuda-13.3/bin/nvcc` — CMake's default discovery picks the
+> wrong one locally, whereas clean CI runners resolve correctly. Ubuntu 24.04
+> local behavior not yet tested.
+> See [Local Execution Policy](#local-execution-policy-build-guard): full local
+> OpenCV+CUDA builds are discouraged; use `pytest` or workflow re-generation
+> for local checks.
+
 ---
 
 ## Getting Started
@@ -107,9 +136,10 @@ Defined in [`utils/build_matrix.py`](utils/build_matrix.py):
 | OS      | Arch | Compiler        | Generator                    |
 |---------|------|-----------------|------------------------------|
 | Linux   | x64  | GCC / CLANG     | Ninja (single-config)        |
-| Windows | x64  | MSVC            | VS 2022 / VS 2026 (multi)    |
+| Windows | x64  | MSVC            | VS 2022 (multi)                |
 
 Linux arm64 and non-MSVC Windows compilers are intentionally not built (OpenCV+CUDA).
+VS 2026 was removed: remote build fails downloading cuDNN (see top notice).
 
 ---
 

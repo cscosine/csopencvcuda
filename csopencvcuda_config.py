@@ -771,9 +771,7 @@ def opencv_mapping(
 
     Archives are published for (see utils/build_matrix.py):
     - Linux x64 (ubuntu22.04 / ubuntu24.04): GCC, Ninja single-config;
-    - Windows x64: MSVC, Visual Studio 2026 multi-config (archives for the
-      2022 generator are also published, but the 2026 variant is the one
-      resolved for consumers).
+    - Windows x64: MSVC, Visual Studio 2022 multi-config.
 
     Contexts that are not built (e.g. Linux arm64) return None.
     """
@@ -793,7 +791,7 @@ def opencv_mapping(
         new_context.context_compiler_generator = ContextCompilerGenerator(
             compiler_family=Compiler.MSVC,
             compiler_version=ContextCompilerGenerator.COMPILER_VERSION_DEFAULT,
-            build_generator=GeneratorWithType.MSVC_18_2026,
+            build_generator=GeneratorWithType.MSVC_17_2022,
         )
         return new_context
 

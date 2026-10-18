@@ -23,7 +23,7 @@ def populate_build_matrix() -> list[ContextOsArchitectureCompilerGenerator]:
     - Linux: x64 only (CUDA requirement), GCC and CLANG with the Ninja
       single-config generator.
     - Windows: x64 only, MSVC with the Visual Studio multi-config generators
-      (2022 and 2026); non-MSVC compilers are not supported by this OpenCV build.
+      2022; non-MSVC compilers are not supported by this OpenCV build.
 
     NOTE: this deviates from the csorchestrator default matrix
     (`get_supported_context_os_architecture_list()`), which includes Linux arm64
@@ -63,7 +63,6 @@ def populate_build_matrix() -> list[ContextOsArchitectureCompilerGenerator]:
         )
         for generator in [
             GeneratorWithType.MSVC_17_2022,
-            GeneratorWithType.MSVC_18_2026,
         ]:
             ccg = ContextCompilerGenerator(
                 compiler_family=Compiler.MSVC,

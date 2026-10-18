@@ -43,7 +43,7 @@ jobs:
         )
 
         input_folder_base = Path('.')
-        input_manifest_path_variant = [(Path('csopencvcuda-5.0.0-csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja/csopencvcuda-5.0.0-csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja.csOrchestratorManifest'), 'csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja'), (Path('csopencvcuda-5.0.0-csv1-linux-ubuntu22.04-x64-generic-clang-default-ninja/csopencvcuda-5.0.0-csv1-linux-ubuntu22.04-x64-generic-clang-default-ninja.csOrchestratorManifest'), 'csv1-linux-ubuntu22.04-x64-generic-clang-default-ninja'), (Path('csopencvcuda-5.0.0-csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja/csopencvcuda-5.0.0-csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja.csOrchestratorManifest'), 'csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja'), (Path('csopencvcuda-5.0.0-csv1-linux-ubuntu24.04-x64-generic-clang-default-ninja/csopencvcuda-5.0.0-csv1-linux-ubuntu24.04-x64-generic-clang-default-ninja.csOrchestratorManifest'), 'csv1-linux-ubuntu24.04-x64-generic-clang-default-ninja'), (Path('csopencvcuda-5.0.0-csv1-windows-v10-x64-generic-msvc-default-msvc2022/csopencvcuda-5.0.0-csv1-windows-v10-x64-generic-msvc-default-msvc2022.csOrchestratorManifest'), 'csv1-windows-v10-x64-generic-msvc-default-msvc2022'), (Path('csopencvcuda-5.0.0-csv1-windows-v10-x64-generic-msvc-default-msvc2026/csopencvcuda-5.0.0-csv1-windows-v10-x64-generic-msvc-default-msvc2026.csOrchestratorManifest'), 'csv1-windows-v10-x64-generic-msvc-default-msvc2026')]
+        input_manifest_path_variant = [(Path('csopencvcuda-5.0.0-csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja/csopencvcuda-5.0.0-csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja.csOrchestratorManifest'), 'csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja'), (Path('csopencvcuda-5.0.0-csv1-linux-ubuntu22.04-x64-generic-clang-default-ninja/csopencvcuda-5.0.0-csv1-linux-ubuntu22.04-x64-generic-clang-default-ninja.csOrchestratorManifest'), 'csv1-linux-ubuntu22.04-x64-generic-clang-default-ninja'), (Path('csopencvcuda-5.0.0-csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja/csopencvcuda-5.0.0-csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja.csOrchestratorManifest'), 'csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja'), (Path('csopencvcuda-5.0.0-csv1-linux-ubuntu24.04-x64-generic-clang-default-ninja/csopencvcuda-5.0.0-csv1-linux-ubuntu24.04-x64-generic-clang-default-ninja.csOrchestratorManifest'), 'csv1-linux-ubuntu24.04-x64-generic-clang-default-ninja'), (Path('csopencvcuda-5.0.0-csv1-windows-v10-x64-generic-msvc-default-msvc2022/csopencvcuda-5.0.0-csv1-windows-v10-x64-generic-msvc-default-msvc2022.csOrchestratorManifest'), 'csv1-windows-v10-x64-generic-msvc-default-msvc2022')]
         output_manifest_filename = Path('csopencvcuda-5.0.0.csOrchestratorManifest')
         project_name = 'csopencvcuda'
         project_version = '5.0.0'
@@ -172,17 +172,6 @@ jobs:
           generator_type: multiconfig
           generator_cmake: Visual Studio 17 2022
           runner: windows-2022
-        - execution_id: '5'
-          os: windows
-          os_version: v10
-          architecture: x64
-          architecture_variant: generic
-          compiler: msvc
-          compiler_version: default
-          generator: msvc2026
-          generator_type: multiconfig
-          generator_cmake: Visual Studio 18 2026
-          runner: windows-2025-vs2026
     steps:
     - name: Repo git self-checkout
       uses: actions/checkout@v6

@@ -43,7 +43,7 @@ def test_opencv_mapping_on_supported_contexts() -> None:
             assert res.context_compiler_generator == ContextCompilerGenerator(
                 compiler_family=Compiler.MSVC,
                 compiler_version=ContextCompilerGenerator.COMPILER_VERSION_DEFAULT,
-                build_generator=GeneratorWithType.MSVC_18_2026,
+                build_generator=GeneratorWithType.MSVC_17_2022,
             )
 
         else:
@@ -76,9 +76,6 @@ def test_build_matrix_platforms_and_architectures() -> None:
             assert config.context_compiler_generator.build_generator == GeneratorWithType.NINJA
         elif os_arch.os == OS.WINDOWS:
             assert config.context_compiler_generator.compiler_family == Compiler.MSVC
-            assert config.context_compiler_generator.build_generator in (
-                GeneratorWithType.MSVC_17_2022,
-                GeneratorWithType.MSVC_18_2026,
-            )
+            assert config.context_compiler_generator.build_generator in (GeneratorWithType.MSVC_17_2022,)
         else:
             raise AssertionError("non expected os in build matrix")
