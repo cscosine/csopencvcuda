@@ -188,7 +188,7 @@ jobs:
       with:
         repository: cscosine/opencv.git
         path: workspace/opencv
-        ref: cs-main
+        ref: v5.0.0-cuda
         fetch-depth: '1'
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
     - name: opencv_contrib Git clone/pull-ff
@@ -196,7 +196,7 @@ jobs:
       with:
         repository: cscosine/opencv_contrib.git
         path: workspace/opencv_contrib
-        ref: cs-main
+        ref: v5.0.0-cuda
         fetch-depth: '1'
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
     - name: Run command Pre-accept MS fonts EULA (Linux)
