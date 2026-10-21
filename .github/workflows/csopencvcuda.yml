@@ -188,7 +188,7 @@ jobs:
       with:
         repository: cscosine/opencv.git
         path: workspace/opencv
-        ref: v5.0.0-cuda
+        ref: dev-cuda
         fetch-depth: '1'
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
     - name: opencv_contrib Git clone/pull-ff
