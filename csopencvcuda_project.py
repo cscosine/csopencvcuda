@@ -74,7 +74,13 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
         version=OPENCV_VERSION,
         base_install_dir=base_install_dir,
         populate_default_matrix=False,
-        additional_files_list=[Path("csopencvcuda_config.py")],
+        additional_files_list=[
+            Path("csopencvcuda_config.py"),
+            Path("cmake/FindCUDA.cmake"),
+            Path("cmake/FindCUDA/make2cmake.cmake"),
+            Path("cmake/FindCUDA/parse_cubin.cmake"),
+            Path("cmake/FindCUDA/run_nvcc.cmake"),
+        ],
     )
 
     o.execution_matrix = create_default_execution_matrix(populate_build_matrix())

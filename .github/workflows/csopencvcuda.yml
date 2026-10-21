@@ -48,7 +48,7 @@ jobs:
         project_name = 'csopencvcuda'
         project_version = '5.0.0'
         base_path_additional_files = Path(os.environ["GITHUB_WORKSPACE"])
-        list_additional_files = [Path('csopencvcuda_config.py')]
+        list_additional_files = [Path('csopencvcuda_config.py'), Path('cmake/FindCUDA.cmake'), Path('cmake/FindCUDA/make2cmake.cmake'), Path('cmake/FindCUDA/parse_cubin.cmake'), Path('cmake/FindCUDA/run_nvcc.cmake')]
         output_folder_additional_files = Path('generated-for-release')
         output_bundle_file_name = Path('csopencvcuda-5.0.0-bundle.tar.gz')
         repo_publish_config_dict = {}
