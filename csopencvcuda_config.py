@@ -583,7 +583,7 @@ def install_csopencvcuda_build_dependencies(
     """
     report = Report()
 
-    p = orchestrator.create_phase("Install Build Dependencies (csopencvcuda)")
+    p = orchestrator.create_phase("Install Build Dependencies (csopencvcuda) " + phase_name_suffix)
 
     # ------------------------------ LINUX ------------------------------
     p.add_step(
