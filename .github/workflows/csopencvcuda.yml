@@ -175,20 +175,24 @@ jobs:
     steps:
     - name: Repo git self-checkout
       uses: actions/checkout@v6
-    - name: csCMake Git clone/pull-ff
-      uses: actions/checkout@v6
+    - name: csCMake v1.0.0-rc2 release download tar.gz
+      uses: robinraju/release-downloader@v1.13
       with:
-        repository: cscosine/csCMake.git
-        path: workspace/csCMake
-        ref: main
-        fetch-depth: '1'
-        token: ${{ secrets.ACTIONS_ORG_ACCESS }}
+        repository: cscosine/csCMake
+        tag: v1.0.0-rc2
+        fileName: csCMake-1.0.0-rc2.tar.gz
+        out-file-path: workspace
+    - name: csCMake v1.0.0-rc2 release extract tar.gz
+      run: |-
+        tar -xzf workspace/csCMake-1.0.0-rc2.tar.gz -C workspace
+        rm -f workspace/csCMake-1.0.0-rc2.tar.gz
+      shell: bash
     - name: opencv Git clone/pull-ff
       uses: actions/checkout@v6
       with:
         repository: cscosine/opencv.git
         path: workspace/opencv
-        ref: v5.0.1-cuda
+        ref: v5.0.2-cuda
         fetch-depth: '1'
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
     - name: opencv_contrib Git clone/pull-ff
@@ -534,7 +538,7 @@ jobs:
       uses: robinraju/release-downloader@v1.13
       with:
         repository: cscosine/third_party_base_libs
-        tag: v0.1.0-rc3
+        tag: v0.1.0-rc6
         fileName: third_party_base_libs-0.1.0-eigen3-3.4.0-csv1-${{ matrix.os }}.tar.gz
         out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
     - name: Get Precompiled Lib eigen3 extract tar.gz
