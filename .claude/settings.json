@@ -8,6 +8,8 @@
     }
   },
   "enabledPlugins": {
-    "cs-org@cscosine": true
+    "cs-org@cscosine": true,
+    "cscmake@cscosine": true,
+    "csorchestrator@cscosine": true
   }
 }
