@@ -75,7 +75,7 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
     o = create_default_orchestrator(
         name="csopencvcuda",
         # staggered weekly run (UTC), one project at a time in the build-train order (no shared runners)
-        schedule=Cron.weekly(DayOfWeek.SUN, hour=15, minute=30),
+        schedule=Cron.weekly(DayOfWeek.SUN, hour=14, minute=0),
         version=OPENCV_VERSION,
         base_install_dir=base_install_dir,
         populate_default_matrix=False,
