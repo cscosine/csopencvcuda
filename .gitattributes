@@ -1,3 +1,4 @@
+# Owned by the project template (cs-project-template): change it there. Project lines: at the end, after the marker.
 * text=auto
 
 # Python
@@ -7,10 +8,26 @@
 # Markdown
 *.md diff=markdown
 
-# Line endings
+# Line endings: LF for the scripts (PowerShell runs LF scripts on every OS; the template writes them with LF)
 *.sh text eol=lf
+*.ps1 text eol=lf
 *.bat text eol=crlf
-*.ps1 text eol=crlf
+
+# C++, CUDA and CMake sources, JSON (CMakePresets.json, ...): LF on every OS
+*.h text eol=lf
+*.hpp text eol=lf
+*.hxx text eol=lf
+*.cpp text eol=lf
+*.cc text eol=lf
+*.cxx text eol=lf
+*.inl text eol=lf
+*.ipp text eol=lf
+*.cu text eol=lf
+*.cuh text eol=lf
+*.json text eol=lf
+*.cmake text eol=lf
+*.cmake.in text eol=lf
+CMakeLists.txt text eol=lf
 
 # Binary safety
 *.png binary
@@ -18,3 +35,5 @@
 *.zip binary
 *.exe binary
 *.pkl binary
+
+# --- project ---

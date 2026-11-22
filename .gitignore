@@ -1,3 +1,6 @@
+# Owned by the project template (cs-project-template): change it there. Project lines: at the end, after the marker.
+
+# Python
 __pycache__/
 *.pyc
 .mypy_cache/
@@ -5,6 +8,7 @@ __pycache__/
 .pytest_cache/
 .venv/
 *.egg-info/
+dist/
 
 # coverage artifacts
 htmlcov/
@@ -12,5 +16,17 @@ htmlcov/
 .coverage.*
 coverage*.xml
 
-# workspace for csorchestrator
+# csorchestrator workspace (checkouts, builds, installs, deploy archives)
 workspace/
+
+# local C++ builds, the developer's own CMake presets
+build/
+out/
+.cache/
+CMakeUserPresets.json
+
+# operating systems
+.DS_Store
+Thumbs.db
+
+# --- project ---

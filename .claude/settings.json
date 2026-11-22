@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "cscosine": {
+      "source": {
+        "source": "github",
+        "repo": "cscosine/.github"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "cs-org@cscosine": true
+  }
+}

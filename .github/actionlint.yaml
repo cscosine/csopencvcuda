@@ -1,0 +1,13 @@
+# Owned by the project template (cs-project-template): change it there.
+# Configuration of actionlint (the actionlint hook of .pre-commit-config.yaml), which checks the workflow files.
+#
+# actionlint checks each runs-on label against its own list of the GitHub-hosted runner images. GitHub-hosted images
+# newer than the pinned actionlint are missing from that list and reported as unknown labels: they are declared here.
+# "self-hosted-runner" is the only actionlint setting for extra labels: it accepts them as valid labels, the runners
+# stay the GitHub-hosted ones (GitHub Actions does not read this file).
+#
+# Remove a label once the pinned actionlint knows it (actionlint then reports nothing without it).
+self-hosted-runner:
+  labels:
+    - ubuntu-26.04
+    - ubuntu-26.04-arm

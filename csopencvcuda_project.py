@@ -41,7 +41,7 @@ from utils.build_matrix import populate_build_matrix
 
 # version of the OpenCV being built (also used as the csopencvcuda project
 # version: keep pyproject.toml in sync when bumping)
-OPENCV_VERSION = "5.0.0"
+OPENCV_VERSION = "5.1.0"
 
 # prefix commands (PowerShell) applied before the CMake workflow on Windows:
 # remove MinGW and Strawberry from PATH to avoid conflicts with MSVC
@@ -70,7 +70,7 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
     base_target_dir = Path("workspace")
     base_install_dir = base_target_dir / Path("install")
     base_libs_dir = base_target_dir / Path("libs")
-    cscmake_version = "1.0.0-rc2"
+    cscmake_version = "1.0.0"
 
     o = create_default_orchestrator(
         name="csopencvcuda",
@@ -96,10 +96,9 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
         base_target_dir=base_target_dir,
         checkout_phase_name="Repos Update",
         repo_ref_dict={
-            "opencv": "v5.0.2-cuda",
-            "opencv_contrib": f"v{OPENCV_VERSION}-cuda",
+            "opencv": f"v{OPENCV_VERSION}-cuda.1",
+            "opencv_contrib": f"v{OPENCV_VERSION}-cuda.1",
         },
-        repo_access_token="${{ secrets.ACTIONS_ORG_ACCESS }}",
         release_archive_list=[create_cscmake_release_archive(cscmake_version)],
     )
 

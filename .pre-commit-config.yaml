@@ -1,4 +1,10 @@
+# Owned by the project template (cs-project-template): change it there.
+# Project hooks: between the `project: begin` / `project: end` markers (they merge cleanly on `copier update`).
 fail_fast: false # using true is too annoying in development
+# --- project: begin (files no hook touches, a regex on the path: e.g. the upstream files of a copied library) ---
+# vendored: the FindCUDA module of CMake (Kitware, BSD-3-Clause), kept as upstream ships it
+exclude: ^cmake/FindCUDA
+# --- project: end ---
 
 repos:
   # run pre-commit autoupdate to update these versions
@@ -6,6 +12,9 @@ repos:
     rev: v6.0.0
     hooks:
       - id: check-added-large-files # prevents giant files from being committed.
+        # --- project: begin (files allowed to be large on purpose, e.g. datasets) ---
+        # exclude: ^datasets/
+        # --- project: end ---
       - id: check-case-conflict # checks for files that would conflict in case-insensitive filesystems.
       - id: check-merge-conflict # checks for files that contain merge conflict strings.
       - id: check-yaml # checks yaml files for parseable syntax.
@@ -26,36 +35,49 @@ repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.15.12
     hooks:
-      - id: ruff
+      - id: ruff-check
         args: [--fix]
       - id: ruff-format
 
-#  activate when csorchestrator is available as a package and can be added as additional-dependencies, for now, use as local command
-#  - repo: https://github.com/pre-commit/mirrors-mypy
-#    rev: v1.20.2
-#    hooks:
-#      - id: mypy
-#        args:
-#          [
-#            "--config-file=pyproject.toml",
-#          ]
-#        additional_dependencies:
-#          - types-PyYAML
+  # mypy runs in the project venv (./setup.sh, then activate it): it sees the project's dependencies, csorchestrator
+  # included (not on PyPI); skipped when the repository has no Python files
   - repo: local
     hooks:
       - id: mypy
         name: mypy
         entry: python -m mypy .
         language: system
+        types_or: [python, pyi]
         pass_filenames: false
         args:
           - --config-file=pyproject.toml
+
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v20.1.4
+    hooks:
+      - id: clang-format
+        # C, C++, CUDA sources only: not JSON or JavaScript (clang-format's other languages), which would touch
+        # generated files such as CMakePresets.json
+        types_or: [c, c++, cuda]
+        args: ["-style=file"]
+
+  # CMake: gersemi lays out the CMake files (.gersemirc) with the signatures of the csCMake commands, cscmake-lint checks
+  # the CMake rules of cscosine (lowercase names, a comment above every function, size limits, line length)
+  - repo: https://github.com/cscosine/cs-pre-commit-hooks
+    rev: v1.0.0
+    hooks:
+      - id: gersemi-cscmake
+      - id: cscmake-lint
 
   - repo: https://github.com/rhysd/actionlint
     rev: v1.7.12
     hooks:
       - id: actionlint
 
+  # --- project: begin (this repository's own hooks, between the two markers) ---
+  # --- project: end ---
+
+  # the final check, always last (template)
   - repo: local
     hooks:
       - id: no-unstaged-changes

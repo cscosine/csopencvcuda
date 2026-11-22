@@ -1,0 +1,18 @@
+# Owned by the project template (cs-project-template): change it there.
+# Categories of the release notes GitHub generates from the merged PRs (by label).
+changelog:
+  exclude:
+    labels: [ignore-for-release]
+  categories:
+    - title: Breaking changes
+      labels: [breaking]
+    - title: Features
+      labels: [feature]
+    - title: Fixes
+      labels: [fix]
+    - title: Documentation
+      labels: [docs]
+    - title: CI
+      labels: [ci]
+    - title: Other changes
+      labels: ["*"]
