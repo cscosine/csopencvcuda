@@ -1,0 +1,47 @@
+# Owned by the project template (cs-project-template): change it there.
+# The checks of every repository, every kind (inner repositories included): pre-commit on every file, every hook, in
+# the project venv, as a developer runs it. Fails when a hook fails or changes a file, so a commit made with
+# --no-verify or edited on github.com is caught.
+name: Checks
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+
+      # the venv of the repository: setup.sh (a tool, a project: the dev tools, csorchestrator); a library has no
+      # Python, pre-commit only
+      - name: Setup
+        run: |
+          if [ -f setup.sh ]; then
+            ./setup.sh
+          else
+            python -m venv .venv
+            .venv/bin/python -m pip install pre-commit
+          fi
+        shell: bash
+
+      - name: Run pre-commit
+        run: |
+          source .venv/bin/activate
+          pre-commit run --all-files --show-diff-on-failure
+        shell: bash

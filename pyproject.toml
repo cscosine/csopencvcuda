@@ -1,98 +1,66 @@
+# Mixed file. Owned by the project: [project] and its sub-tables, and every table after the
+# "project" marker at the end. Owned by the project template (cs-project-template, change it there): [build-system]
+# and the tables between the "template" markers. Never edit a template line here: `copier update` keeps the project
+# lines and replaces the template ones.
+
 [build-system]
-requires = ["setuptools>=64", "wheel"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "csopencvcuda"
-version = "5.0.0"
-description = "opencv with cuda support system for csorchestrator"
+version = "5.1.0"
+description = "OpenCV 5 with CUDA built for Linux x64 and Windows"
 authors = [
   { name = "cscosine-dev", email = "cscosine@gmail.com" }
 ]
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 requires-python = ">=3.11"
-dependencies = [
-    # add csorchestrator when available on pip
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    # template: the tools of .pre-commit-config.yaml and the tests
+    "pytest>=9",
+    "pytest-cov>=7",
+    "mypy>=1.20",
+    "ruff>=0.15",
+    "pre-commit>=4",
+    "import-linter[ui]>=2.11",
+    "types-PyYAML",
+    "copier>=9.4",
+    # project: below
 ]
+
+# === template: begin =================================================================================================
 
 [tool.setuptools.packages.find]
 where = ["./"]
+exclude = ["tests", "tests.*"]
 
-[project.optional-dependencies]
-# development tools (tests, linting, type checking)
-dev = [
-    "pytest>=9",
-    "pytest-cov>=7",
-    "mypy>=1.0",
-    "ruff>=0.4",
-    "pre-commit>=4",
-    "import-linter[ui]>=2.0",
-    "types-PyYAML",
-]
-
-# ===============================
-# Ruff - Linter + Formatter
-# ===============================
 [tool.ruff]
-
-# Maximum allowed line length for linting.
 line-length = 120
-
-# Target Python version for rule selection / parsing.
 target-version = "py311"
 
 [tool.ruff.lint]
-# Enabled rule groups:
-# E  -> Pycodestyle errors (style issues)
-# F  -> Pyflakes (logical errors / unused imports)
-# I  -> Import sorting
-# B  -> Bugbear (common bug patterns)
-# UP -> modern Python suggestions
-# SIM -> catches simplifications
-# N  -> PEP8 naming conventions
-# C4 -> flake8-comprehensions (more Pythonic comprehensions)
-# W  -> Pycodestyle warnings
-select = [
-    "E",
-    "F",
-    "I",
-    "B",
-    "UP",
-    "SIM",
-    "N",
-    "C4",
-    "W",
-]
+# E, W: pycodestyle; F: pyflakes; I: import sorting; B: bugbear; UP: pyupgrade; SIM: simplifications;
+# N: PEP 8 naming; C4: comprehensions
+select = ["E", "F", "I", "B", "UP", "SIM", "N", "C4", "W"]
 
 [tool.ruff.format]
-# Force double quotes in formatted code.
-# This keeps formatting consistent across the project.
 quote-style = "double"
 
-# ===============================
-# MyPy - Static Type Checker
-# ===============================
 [tool.mypy]
 mypy_path = "./"
+# the csorchestrator workspace
 exclude = "^workspace/"
-
-# Python version used for type checking.
 python_version = "3.11"
-
-# Enables strict type checking mode.
-# This makes mypy behave like a production-grade type checker.
-# It enables:
-# - No implicit Any
-# - Strict optional checks
-# - Unused ignore detection
+# strict: no implicit Any, strict optional, unused ignores reported
 strict = true
-
-# Ignore missing type hints in third-party libraries.
-# Many libraries don't ship with typing, so this avoids noise.
+# third-party libraries without type hints
 ignore_missing_imports = true
-
-# Treat ./ as a real package root. Do not auto-guess.
+# ./ is the package root: no guessing
 explicit_package_bases = true
 namespace_packages = true
 
@@ -102,28 +70,13 @@ disallow_untyped_defs = false
 check_untyped_defs = true
 disallow_untyped_decorators = false
 
-# ===============================
-# pytest - test execution
-# ===============================
-
 [tool.pytest.ini_options]
+# markers and the --run-* options: conftest.py
+testpaths = ["tests"]
+norecursedirs = ["workspace", "*.egg-info", ".git", "__pycache__"]
+pythonpath = ["./"]
+addopts = ["-ra", "--strict-markers"]
 
-testpaths = [
-    "tests"
-]
+# === template: end ===================================================================================================
 
-norecursedirs = [
-    "workspace",
-    "*.egg-info",
-    ".git",
-    "__pycache__"
-]
-
-pythonpath = [
-    "./"
-]
-
-addopts = [
-    "-ra",
-    "--strict-markers"
-]
+# --- project ---

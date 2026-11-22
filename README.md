@@ -1,6 +1,6 @@
 # csopencvcuda
 
-Automated cross-platform build system and CI pipeline recipe for **OpenCV with CUDA support** (targeting **v5.0.0**), powered by [**csorchestrator**](https://github.com/cscosine/csorchestrator).
+Automated cross-platform build system and CI pipeline recipe for **OpenCV with CUDA support** (targeting **v5.1.0**), powered by [**csorchestrator**](https://github.com/cscosine/csorchestrator).
 
 > [!CAUTION]
 > ## ⚠️ Known Build Limitations — Read Before Building
@@ -31,70 +31,50 @@ Automated cross-platform build system and CI pipeline recipe for **OpenCV with C
 > OpenCV+CUDA builds are discouraged; use `pytest` or workflow re-generation
 > for local checks.
 
----
+<!-- cs-template:begin (this block is owned by cs-project-template: do not edit; the rest of the file is the project's) -->
+## Getting started
 
-## Getting Started
-
-### Prerequisites
-
-* Python `>= 3.11`
-* Git
-* [csorchestrator](https://github.com/cscosine/csorchestrator) cloned as a peer directory (`../csorchestrator`)
-
-### Environment Setup
-
-Bootstrap the local virtual environment, install dev dependencies, link `csorchestrator` in editable mode, and install git hooks:
-
-**Linux / macOS:**
-```bash
-./setup.sh
-source .venv/bin/activate
-```
-
-**Windows (PowerShell):**
-```powershell
-.\setup.ps1
-.\.venv\Scripts\Activate.ps1
-```
-
-### Running the Orchestrator Locally
-
-Execute the orchestrator script to run pipeline steps locally:
+Requires Python 3.11 or newer and Git.
 
 ```bash
-./csopencvcuda_project.py
-# or
+./setup.sh                    # Windows: .\setup.ps1
+source .venv/bin/activate     # Windows: .\.venv\Scripts\Activate.ps1
+```
+
+`setup.sh` creates `.venv`, installs the project with its development tools and csorchestrator, and installs the
+pre-commit hooks.
+
+csorchestrator: `setup.sh` installs the pinned version (v0.1.0). Another one:
+`./setup.sh --csorchestrator=<tag or branch>`; a local clone, editable: `./setup.sh --csorchestrator=../csorchestrator`
+(Windows: `.\setup.ps1 -CsOrchestrator <...>`).
+
+Run the recipe locally, regenerate the GitHub workflow after changing it:
+
+```bash
 python csopencvcuda_project.py
-```
-
-### Re-generating the GitHub Workflow
-
-To re-generate the GitHub Actions CI workflow (`.github/workflows/csopencvcuda.yml`) from the definition in [`csopencvcuda_project.py`](csopencvcuda_project.py):
-
-```bash
-./csopencvcuda_project.py generate-github-workflow
-# or
 python csopencvcuda_project.py generate-github-workflow
 ```
 
-### Development & Quality Checks
+Generated files, never edited by hand:
+
+| Path | Made by | |
+|---|---|---|
+| `.github/workflows/csopencvcuda.yml` | `csopencvcuda_project.py generate-github-workflow` | Edit the recipe, then regenerate |
+| `csorchestratorsdk/` | csorchestrator, at the same command | The release-manifest helpers the CI runs, without installing csorchestrator |
+| `dependencies/` | csorchestrator, at the same command | The manifests and recipes of the releases this project builds on |
+| `workspace/` *(git-ignored)* | a local run of `csopencvcuda_project.py` | Sources, builds, installs, deploy archives; delete it to start clean |
+
+Checks and tests:
 
 ```bash
-# Code formatting and linting
-ruff check .
-ruff format .
-
-# Strict type checking
-python -m mypy . --config-file=pyproject.toml
-
-# Unit tests
-pytest
-
-# Run all pre-commit hooks
 pre-commit run --all-files
+pytest                        # --run-all: every test, as CI; --run=<marker>: an opt-in group (tests/conftest.py)
 ```
 
----
+The shared files (setup, checks, CI, agent rules) come from
+[cs-project-template](https://github.com/cscosine/cs-project-template); to bring them to its latest version, on a
+branch: `copier update --defaults`.
+<!-- cs-template:end -->
 
 ## Overview
 
@@ -112,13 +92,13 @@ The core build recipe is defined in [`csopencvcuda_project.py`](csopencvcuda_pro
 
 ### Version Alignment
 
-The project version (`5.0.0`, tracking the OpenCV release being built) is defined in [`csopencvcuda_project.py`](csopencvcuda_project.py) (`OPENCV_VERSION`) and mirrored in [`pyproject.toml`](pyproject.toml) — keep the two aligned when bumping the version.
+The project version (`5.1.0`, tracking the OpenCV release being built) is defined in [`csopencvcuda_project.py`](csopencvcuda_project.py) (`OPENCV_VERSION`) and mirrored in [`pyproject.toml`](pyproject.toml) — keep the two aligned when bumping the version.
 
 ### Execution Phases
 
 1. **Repos Update**:
-   - Downloads the csCMake release package pinned in [`csopencvcuda_project.py`](csopencvcuda_project.py) (`cscmake_version`, e.g. `1.0.0-rc2`) and unpacks it into `workspace/csCMake`, where the presets of the OpenCV fork find it (sibling layout).
-   - Shallow clones (`depth=1`) of `cscosine/opencv` and `cscosine/opencv_contrib` at the tags configured in [`csopencvcuda_project.py`](csopencvcuda_project.py) (e.g. `v5.0.2-cuda`, `v5.0.0-cuda`).
+   - Downloads the csCMake release package pinned in [`csopencvcuda_project.py`](csopencvcuda_project.py) (`cscmake_version`, e.g. `1.0.0`) and unpacks it into `workspace/csCMake`, where the presets of the OpenCV fork find it (sibling layout).
+   - Shallow clones (`depth=1`) of `cscosine/opencv` and `cscosine/opencv_contrib` at the tags configured in [`csopencvcuda_project.py`](csopencvcuda_project.py) (`v5.1.0-cuda.1`: the `cuda` variant of both forks, see their `cscosine/README.md`; releases are tagged after the fork tag they ship, `v5.1.0-cuda.1-rc1`, `v5.1.0-cuda.1`).
 2. **Install Build Dependencies (csopencvcuda)**:
    - All environment-replication steps: Microsoft fonts EULA pre-accept, libunwind removal (Ubuntu 22.04), apt dev packages, **CUDA and cuDNN toolkits**, numpy (Windows).
    - Precompiled `eigen3` downloaded from the [third_party_base_libs](https://github.com/cscosine/third_party_base_libs) provider (`ManifestGithub` + `StepGetPrecompiledLibGithub`).
@@ -176,13 +156,6 @@ csopencvcuda/
 └── .github/workflows/
     └── csopencvcuda.yml         # [Autogenerated] GitHub Actions CI workflow (emitted by csopencvcuda_project.py)
 ```
-
-### Autogenerated Files Lifecycle
-
-| Path | Origin / Trigger | Maintenance Policy |
-|---|---|---|
-| [`.github/workflows/csopencvcuda.yml`](.github/workflows/csopencvcuda.yml) | Autogenerated by running `./csopencvcuda_project.py generate-github-workflow`. | **Never edit manually.** Edit `csopencvcuda_project.py` or files in `utils/`, then re-run the generator command. |
-| `workspace/` *(gitignored)* | Created at runtime when running `./csopencvcuda_project.py` locally. | Holds cloned sources, temporary build directories, and install outputs. Can be safely deleted to reset local state. |
 
 ---
 

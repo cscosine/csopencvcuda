@@ -5,6 +5,10 @@
     "ms-python.debugpy",
     "charliermarsh.ruff",
     "ms-python.mypy-type-checker",
-    "iulian-radu-at.vscode-tasks-sidebar"
+    "iulian-radu-at.vscode-tasks-sidebar",
+    "ms-vscode.cmake-tools",
+    "llvm-vs-code-extensions.vscode-clangd",
+    "ms-vscode.cpptools",
+    "bierner.markdown-mermaid"
   ]
 }
