@@ -9,6 +9,7 @@
     "ms-vscode.cmake-tools",
     "llvm-vs-code-extensions.vscode-clangd",
     "ms-vscode.cpptools",
-    "bierner.markdown-mermaid"
+    "bierner.markdown-mermaid",
+    "anthropic.claude-code"
   ]
 }

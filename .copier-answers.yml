@@ -1,5 +1,5 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: v1.2.2
+_commit: v1.2.3
 _src_path: gh:cscosine/cs-project-template
 claude_plugins:
 - cscmake
