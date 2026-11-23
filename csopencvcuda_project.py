@@ -67,10 +67,10 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
     # set to True to upload the build tree as an artifact for debugging purposes
     flag_debug_upload_build_tree = False
 
-    base_target_dir = Path("workspace")
+    base_target_dir = Path("_csw")
     base_install_dir = base_target_dir / Path("install")
     base_libs_dir = base_target_dir / Path("libs")
-    cscmake_version = "1.0.0"
+    cscmake_version = "1.1.0"
 
     o = create_default_orchestrator(
         name="csopencvcuda",
@@ -156,7 +156,7 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
                 uses="actions/upload-artifact@v7",
                 with_list={
                     "name": "build-tree",
-                    "path": "workspace/build",
+                    "path": (base_target_dir / "build").as_posix(),
                     "if-no-files-found": "warn",
                 },
             ).add_extra(StepGithubIfAlways())

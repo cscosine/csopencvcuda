@@ -175,30 +175,30 @@ jobs:
     steps:
     - name: Repo git self-checkout
       uses: actions/checkout@v6
-    - name: csCMake v1.0.0 release download tar.gz
+    - name: csCMake v1.1.0 release download tar.gz
       uses: robinraju/release-downloader@v1.13
       with:
         repository: cscosine/csCMake
-        tag: v1.0.0
-        fileName: csCMake-1.0.0.tar.gz
-        out-file-path: workspace
-    - name: csCMake v1.0.0 release extract tar.gz
+        tag: v1.1.0
+        fileName: csCMake-1.1.0.tar.gz
+        out-file-path: _csw
+    - name: csCMake v1.1.0 release extract tar.gz
       run: |-
-        tar -xzf workspace/csCMake-1.0.0.tar.gz -C workspace
-        rm -f workspace/csCMake-1.0.0.tar.gz
+        tar -xzf _csw/csCMake-1.1.0.tar.gz -C _csw
+        rm -f _csw/csCMake-1.1.0.tar.gz
       shell: bash
     - name: opencv Git clone/pull-ff
       uses: actions/checkout@v6
       with:
         repository: cscosine/opencv.git
-        path: workspace/opencv
+        path: _csw/opencv
         ref: v5.1.0-cuda.1
         fetch-depth: '1'
     - name: opencv_contrib Git clone/pull-ff
       uses: actions/checkout@v6
       with:
         repository: cscosine/opencv_contrib.git
-        path: workspace/opencv_contrib
+        path: _csw/opencv_contrib
         ref: v5.1.0-cuda.1
         fetch-depth: '1'
     - name: Run command Pre-accept MS fonts EULA (Linux)
@@ -538,11 +538,11 @@ jobs:
         repository: cscosine/third_party_base_libs
         tag: v0.1.0
         fileName: third_party_base_libs-0.1.0-eigen3-5.0.1-csv1-${{ matrix.os }}.tar.gz
-        out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
+        out-file-path: _csw/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
     - name: Get Precompiled Lib eigen3 extract tar.gz
       run: |-
-        tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/third_party_base_libs-0.1.0-eigen3-5.0.1-csv1-${{ matrix.os }}.tar.gz -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-        rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/third_party_base_libs-0.1.0-eigen3-5.0.1-csv1-${{ matrix.os }}.tar.gz
+        tar -xzf _csw/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/third_party_base_libs-0.1.0-eigen3-5.0.1-csv1-${{ matrix.os }}.tar.gz -C _csw/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
+        rm -f _csw/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/third_party_base_libs-0.1.0-eigen3-5.0.1-csv1-${{ matrix.os }}.tar.gz
       shell: bash
     - name: cmake workflow on opencv CMake Workflow (Linux) for config(s) debug-release
       run: |-
@@ -558,7 +558,7 @@ jobs:
         fi
       if: ${{ matrix.os == 'linux' && startsWith(matrix.os_version, 'ubuntu') }}
       shell: bash
-      working-directory: workspace/opencv
+      working-directory: _csw/opencv
     - name: cmake workflow on opencv CMake Workflow (Windows on powershell) for config(s) debug-release
       run: |-
         # Remove MinGW and Strawberry from path to avoid conflicts with MSVC
@@ -587,7 +587,7 @@ jobs:
         }
       if: ${{ matrix.os == 'windows' }}
       shell: powershell
-      working-directory: workspace/opencv
+      working-directory: _csw/opencv
     - name: Get Versions
       run: |-
         import sys
@@ -600,12 +600,12 @@ jobs:
         repos_config_file_list = []
         repos_auto_search_list = []
         repos_version = [PackageVersion(name='opencv', version='5.1.0')]
-        base_install_dir = Path('workspace/install')
+        base_install_dir = Path('_csw/install')
         install_subdir = Path('csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}')
         variant_string = 'csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}'
         project_name = 'csopencvcuda'
         project_version = '5.1.0'
-        output_file = Path('workspace/install/csopencvcuda-5.1.0-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}.csOrchestratorManifest')
+        output_file = Path('_csw/install/csopencvcuda-5.1.0-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}.csOrchestratorManifest')
 
         errors_list = get_package_versions_and_write_single_variant_manifest(
             repos_config_file_list=repos_config_file_list,
@@ -636,10 +636,10 @@ jobs:
             load_release_manifest_single_variant_and_prepare_archive,
         )
 
-        input_full_path = Path('workspace/install/csopencvcuda-5.1.0-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}.csOrchestratorManifest')
+        input_full_path = Path('_csw/install/csopencvcuda-5.1.0-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}.csOrchestratorManifest')
         project_name_and_version = 'csopencvcuda-5.1.0'
         context_os_architecture_compiler_generator_string = 'csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}'
-        input_base_dir = Path('workspace/install')
+        input_base_dir = Path('_csw/install')
 
         errors_list = load_release_manifest_single_variant_and_prepare_archive(
             input_full_path=input_full_path,
@@ -660,6 +660,6 @@ jobs:
       with:
         name: csopencvcuda-5.1.0-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
         path: |-
-          workspace/install/*.tar.gz
-          workspace/install/*.csOrchestratorManifest
+          _csw/install/*.tar.gz
+          _csw/install/*.csOrchestratorManifest
         overwrite: true

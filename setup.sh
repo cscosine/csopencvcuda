@@ -14,14 +14,14 @@ Usage: ./setup.sh [--python=<interpreter>] [--csorchestrator=<tag|branch|path>]
 
   --python=<interpreter>        Python used to create .venv (default: python3 when it is 3.11 or newer, otherwise
                                   the newest of python3.14 ... python3.11 found)
-  --csorchestrator=<spec>       csorchestrator to install (default: v0.1.0, the pinned version)
+  --csorchestrator=<spec>       csorchestrator to install (default: v0.1.2, the pinned version)
                                   a tag or branch of github.com/cscosine/csorchestrator, or
                                   the path of a local clone (installed editable, e.g. ../csorchestrator)
 USAGE
 }
 
 PYTHON=""
-CSORCHESTRATOR="v0.1.0"
+CSORCHESTRATOR="v0.1.2"
 for arg in "$@"; do
   case "${arg}" in
     --python=*) PYTHON="${arg#*=}" ;;
@@ -70,9 +70,7 @@ pre-commit install
 
 echo "Setup complete."
 echo ""
-echo "Next: "
+echo "Next:"
 echo "  source .venv/bin/activate"
-echo "  code ."
-echo ""
-echo "Or: "
-echo "  ./open-code.sh"
+echo "  python csopencvcuda_project.py   # downloads the dependencies, builds"
+echo "  ./open-code.sh   # VS Code: the venv, and a C++ build when there is one (not 'code .': no build)"

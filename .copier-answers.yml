@@ -1,11 +1,10 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: v1.1.5
+_commit: v1.2.2
 _src_path: gh:cscosine/cs-project-template
 claude_plugins:
 - cscmake
 - csorchestrator
-csorchestrator_version: v0.1.0
+csorchestrator_version: v0.1.2
 description: OpenCV 5 with CUDA built for Linux x64 and Windows
 kind: project
 project_name: csopencvcuda
-workspace_dir: workspace

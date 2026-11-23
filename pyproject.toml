@@ -54,7 +54,7 @@ quote-style = "double"
 [tool.mypy]
 mypy_path = "./"
 # the csorchestrator workspace
-exclude = "^workspace/"
+exclude = "^_csw/"
 python_version = "3.11"
 # strict: no implicit Any, strict optional, unused ignores reported
 strict = true
@@ -73,7 +73,7 @@ disallow_untyped_decorators = false
 [tool.pytest.ini_options]
 # markers and the --run-* options: conftest.py
 testpaths = ["tests"]
-norecursedirs = ["workspace", "*.egg-info", ".git", "__pycache__"]
+norecursedirs = ["_csw", "*.egg-info", ".git", "__pycache__"]
 pythonpath = ["./"]
 addopts = ["-ra", "--strict-markers"]
 

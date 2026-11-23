@@ -5,7 +5,7 @@ param(
     # default: python when it is 3.11 or newer, otherwise the newest Python 3.14 ... 3.11 of the py launcher
     [string]$Python = "",
     # tag or branch of github.com/cscosine/csorchestrator, or the path of a local clone (installed editable)
-    [string]$CsOrchestrator = "v0.1.0"
+    [string]$CsOrchestrator = "v0.1.2"
 )
 $ErrorActionPreference = "Stop"
 
@@ -65,7 +65,5 @@ Write-Host "Setup complete."
 Write-Host ""
 Write-Host "Next:"
 Write-Host "  .\.venv\Scripts\Activate.ps1"
-Write-Host "  code ."
-Write-Host ""
-Write-Host "Or:"
-Write-Host "  .\open-code.ps1"
+Write-Host "  python csopencvcuda_project.py   # downloads the dependencies, builds"
+Write-Host "  .\open-code.ps1   # VS Code: the venv, and a C++ build when there is one (not 'code .': no build)"

@@ -17,7 +17,7 @@ htmlcov/
 coverage*.xml
 
 # csorchestrator workspace (checkouts, builds, installs, deploy archives)
-workspace/
+_csw/
 
 # local C++ builds, the developer's own CMake presets
 build/

@@ -18,20 +18,17 @@
     }
   ],
   "python.analysis.exclude": [
-    "./workspace",
+    "./_csw",
     "**/node_modules",
     "**/__pycache__",
     "**/.*",
     ".venv"
   ],
   "python.analysis.autoImportCompletions": true,
-  "C_Cpp.intelliSenseEngine": "disabled",
-  "C_Cpp.autocomplete": "disabled",
-  "C_Cpp.errorSquiggles": "disabled",
-  "clangd.arguments": [
-    "--background-index",
-    "--clang-tidy"
-  ],
+  "cmake.ctest.testSuiteDelimiter": " - ",
+  "files.exclude": {
+    "**/__pycache__": true
+  },
   "editor.formatOnSave": true,
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff",
