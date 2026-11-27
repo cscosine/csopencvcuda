@@ -1,0 +1,968 @@
+{
+  "csorchestrator_manifest": {
+    "additional_files": [
+      "third_party_base_libs_config.py"
+    ],
+    "dependencies": {
+      "CLI11": [
+        "Catch2"
+      ],
+      "Catch2": [],
+      "NamedType": [],
+      "bitsery": [],
+      "concurrentqueue": [],
+      "cpptrace": [
+        "zstd"
+      ],
+      "eigen3": [],
+      "fmt": [],
+      "fmt-eigen": [
+        "eigen3",
+        "fmt"
+      ],
+      "libassert": [
+        "cpptrace"
+      ],
+      "magic_enum": [],
+      "nanobench": [],
+      "nanobind": [],
+      "nlohmann_json": [],
+      "spdlog": [
+        "fmt"
+      ],
+      "stb": [],
+      "tclap": [],
+      "tl-expected": [],
+      "tl-optional": [],
+      "tomlplusplus": [],
+      "tracy": [],
+      "unordered_dense": [],
+      "zstd": []
+    },
+    "dependencies_dev": {
+      "CLI11": [],
+      "Catch2": [],
+      "NamedType": [],
+      "bitsery": [],
+      "concurrentqueue": [],
+      "cpptrace": [],
+      "eigen3": [],
+      "fmt": [],
+      "fmt-eigen": [],
+      "libassert": [],
+      "magic_enum": [],
+      "nanobench": [],
+      "nanobind": [],
+      "nlohmann_json": [],
+      "spdlog": [],
+      "stb": [],
+      "tclap": [],
+      "tl-expected": [],
+      "tl-optional": [],
+      "tomlplusplus": [],
+      "tracy": [],
+      "unordered_dense": [],
+      "zstd": []
+    },
+    "headers_only_packages": [
+      "NamedType",
+      "CLI11",
+      "bitsery",
+      "nlohmann_json",
+      "nanobind",
+      "concurrentqueue",
+      "stb",
+      "eigen3",
+      "magic_enum",
+      "fmt-eigen",
+      "tomlplusplus",
+      "unordered_dense",
+      "nanobench",
+      "tclap",
+      "tl-optional",
+      "tl-expected"
+    ],
+    "manifest_version": "1.0",
+    "output_bundle_file_name": "third_party_base_libs-0.1.1-bundle.tar.gz",
+    "packages": [
+      "zstd",
+      "tracy",
+      "Catch2",
+      "libassert",
+      "fmt",
+      "spdlog",
+      "cpptrace"
+    ],
+    "project_name": "third_party_base_libs",
+    "project_version": "0.1.1",
+    "variants": [
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninjamulticonfig"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-linux-ubuntu22.04-x64-generic-clang-default-ninjamulticonfig"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-linux-ubuntu22.04-arm64-generic-gcc-default-ninja"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-linux-ubuntu22.04-arm64-generic-clang-default-ninja"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninjamulticonfig"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-linux-ubuntu24.04-x64-generic-clang-default-ninjamulticonfig"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-linux-ubuntu24.04-arm64-generic-gcc-default-ninja"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-linux-ubuntu24.04-arm64-generic-clang-default-ninja"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-windows-v10-x64-generic-msvc-default-msvc2022"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-windows-v10-x64-generic-msvc-default-msvc2026"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-windows-v10-x64-generic-msvcclang-default-msvc2022"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-windows-v10-x64-generic-msvcclang-default-msvc2026"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-linux-ubuntu26.04-x64-generic-gcc-default-ninjamulticonfig"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-linux-ubuntu26.04-x64-generic-clang-default-ninjamulticonfig"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-linux-ubuntu26.04-arm64-generic-gcc-default-ninja"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-linux-ubuntu26.04-arm64-generic-clang-default-ninja"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-macos-macos15-arm64-generic-appleclang-default-ninjamulticonfig"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-macos-macos15-arm64-generic-appleclang-default-xcode"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-macos-macos26-arm64-generic-appleclang-default-ninjamulticonfig"
+      },
+      {
+        "entries": [
+          {
+            "name": "fmt",
+            "version": "12.2.1"
+          },
+          {
+            "name": "zstd",
+            "version": "1.6.0"
+          },
+          {
+            "name": "cpptrace",
+            "version": "1.0.4"
+          },
+          {
+            "name": "libassert",
+            "version": "2.2.1"
+          },
+          {
+            "name": "Catch2",
+            "version": "3.16.1"
+          },
+          {
+            "name": "spdlog",
+            "version": "1.17.0"
+          },
+          {
+            "name": "tracy",
+            "version": "0.15.0"
+          }
+        ],
+        "variant": "csv1-macos-macos26-arm64-generic-appleclang-default-xcode"
+      },
+      {
+        "entries": [
+          {
+            "name": "eigen3",
+            "version": "5.0.1"
+          },
+          {
+            "name": "fmt-eigen",
+            "version": "1.0.0"
+          },
+          {
+            "name": "magic_enum",
+            "version": "0.10.0"
+          },
+          {
+            "name": "tclap",
+            "version": "1.0.0"
+          },
+          {
+            "name": "NamedType",
+            "version": "1.1.0"
+          },
+          {
+            "name": "tl-optional",
+            "version": "1.1.0"
+          },
+          {
+            "name": "tl-expected",
+            "version": "1.3.1"
+          },
+          {
+            "name": "nlohmann_json",
+            "version": "3.12.0"
+          },
+          {
+            "name": "tomlplusplus",
+            "version": "3.5.1"
+          },
+          {
+            "name": "CLI11",
+            "version": "2.7.2"
+          },
+          {
+            "name": "concurrentqueue",
+            "version": "1.0.5"
+          },
+          {
+            "name": "unordered_dense",
+            "version": "5.3.3"
+          },
+          {
+            "name": "nanobench",
+            "version": "4.6.0"
+          },
+          {
+            "name": "nanobind",
+            "version": "3.1.0"
+          },
+          {
+            "name": "stb",
+            "version": "1.0.0"
+          },
+          {
+            "name": "bitsery",
+            "version": "5.2.5"
+          }
+        ],
+        "variant": "csv1-linux"
+      },
+      {
+        "entries": [
+          {
+            "name": "eigen3",
+            "version": "5.0.1"
+          },
+          {
+            "name": "fmt-eigen",
+            "version": "1.0.0"
+          },
+          {
+            "name": "magic_enum",
+            "version": "0.10.0"
+          },
+          {
+            "name": "tclap",
+            "version": "1.0.0"
+          },
+          {
+            "name": "NamedType",
+            "version": "1.1.0"
+          },
+          {
+            "name": "tl-optional",
+            "version": "1.1.0"
+          },
+          {
+            "name": "tl-expected",
+            "version": "1.3.1"
+          },
+          {
+            "name": "nlohmann_json",
+            "version": "3.12.0"
+          },
+          {
+            "name": "tomlplusplus",
+            "version": "3.5.1"
+          },
+          {
+            "name": "CLI11",
+            "version": "2.7.2"
+          },
+          {
+            "name": "concurrentqueue",
+            "version": "1.0.5"
+          },
+          {
+            "name": "unordered_dense",
+            "version": "5.3.3"
+          },
+          {
+            "name": "nanobench",
+            "version": "4.6.0"
+          },
+          {
+            "name": "nanobind",
+            "version": "3.1.0"
+          },
+          {
+            "name": "stb",
+            "version": "1.0.0"
+          },
+          {
+            "name": "bitsery",
+            "version": "5.2.5"
+          }
+        ],
+        "variant": "csv1-windows"
+      },
+      {
+        "entries": [
+          {
+            "name": "eigen3",
+            "version": "5.0.1"
+          },
+          {
+            "name": "fmt-eigen",
+            "version": "1.0.0"
+          },
+          {
+            "name": "magic_enum",
+            "version": "0.10.0"
+          },
+          {
+            "name": "tclap",
+            "version": "1.0.0"
+          },
+          {
+            "name": "NamedType",
+            "version": "1.1.0"
+          },
+          {
+            "name": "tl-optional",
+            "version": "1.1.0"
+          },
+          {
+            "name": "tl-expected",
+            "version": "1.3.1"
+          },
+          {
+            "name": "nlohmann_json",
+            "version": "3.12.0"
+          },
+          {
+            "name": "tomlplusplus",
+            "version": "3.5.1"
+          },
+          {
+            "name": "CLI11",
+            "version": "2.7.2"
+          },
+          {
+            "name": "concurrentqueue",
+            "version": "1.0.5"
+          },
+          {
+            "name": "unordered_dense",
+            "version": "5.3.3"
+          },
+          {
+            "name": "nanobench",
+            "version": "4.6.0"
+          },
+          {
+            "name": "nanobind",
+            "version": "3.1.0"
+          },
+          {
+            "name": "stb",
+            "version": "1.0.0"
+          },
+          {
+            "name": "bitsery",
+            "version": "5.2.5"
+          }
+        ],
+        "variant": "csv1-macos"
+      }
+    ]
+  }
+}
